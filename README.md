@@ -158,3 +158,4 @@ Navigate to `http://localhost:5173` in your browser.
 
 - **Small Sample Cohort ($n=88$):** The initial dataset contains 88 Reels from 9 creators. While Random Forest captures non-linear interactions between duration and caption density, predictive performance should be interpreted as an empirical baseline rather than a universal recommender.
 - **Observational Data:** High correlations between specific posting hours or durations and reach volume reflect historical distributions within this cohort, not guarantees of algorithmic virality.
+# reels-intelligence
