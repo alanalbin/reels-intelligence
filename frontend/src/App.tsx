@@ -18,6 +18,7 @@ export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<PageId>('dashboard');
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(true);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
 
   const loadSummary = async () => {
     setIsLoadingSummary(true);
@@ -69,7 +70,7 @@ export const App: React.FC = () => {
         };
       case 'predictions':
         return {
-          title: 'Machine Learning Predictions',
+          title: 'Audience Forecaster',
           description: 'Pre-publication virality classification and engagement rate regression'
         };
       case 'dataset':
@@ -79,13 +80,13 @@ export const App: React.FC = () => {
         };
       case 'model-performance':
         return {
-          title: 'Model Performance & Evaluation',
+          title: 'Model Evaluation',
           description: 'Scikit-Learn accuracy, confusion matrix, and feature importance telemetry'
         };
       case 'about':
         return {
-          title: 'About the Project',
-          description: 'Academic objectives, Apify data source, 9-step methodology, and ethics'
+          title: 'Research & Methodology',
+          description: 'Academic objectives, Kaggle data source, 9-step methodology, and ethics'
         };
     }
   };
@@ -93,24 +94,49 @@ export const App: React.FC = () => {
   const meta = getPageMeta(currentPage);
 
   return (
-    <div className="flex h-screen bg-[#F8F9FA] text-gray-900 font-sans overflow-hidden">
-      {/* Persistent Left Sidebar */}
-      <Sidebar
-        currentPage={currentPage}
-        onSelectPage={setCurrentPage}
-        datasetVersion={summary?.dataset_version || 'v1.0-reference'}
-        totalRecords={summary?.total_reels || 88}
-      />
+    <div className="flex h-screen bg-[#F8F9FA] text-slate-900 font-sans overflow-hidden">
+      {/* Desktop Persistent Left Sidebar */}
+      <div className="hidden md:flex h-full shrink-0">
+        <Sidebar
+          currentPage={currentPage}
+          onSelectPage={setCurrentPage}
+          datasetVersion={summary?.dataset_version || 'v1.0-kaggle'}
+          totalRecords={summary?.total_reels || 88}
+        />
+      </div>
+
+      {/* Mobile Slide-Over Drawer Navigation */}
+      {isMobileNavOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileNavOpen(false)}
+          />
+          {/* Drawer Sidebar */}
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white z-10 shadow-2xl animate-in slide-in-from-left duration-200">
+            <Sidebar
+              currentPage={currentPage}
+              onSelectPage={setCurrentPage}
+              datasetVersion={summary?.dataset_version || 'v1.0-kaggle'}
+              totalRecords={summary?.total_reels || 88}
+              onCloseMobile={() => setIsMobileNavOpen(false)}
+              isMobile={true}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
         {/* Compact Top Navigation Bar */}
         <TopBar
           title={meta.title}
           description={meta.description}
-          datasetVersion={summary?.dataset_version || 'v1.0-reference'}
+          datasetVersion={summary?.dataset_version || 'v1.0-kaggle'}
           isReference={summary?.is_reference_dataset ?? true}
           onRefresh={loadSummary}
+          onToggleMobileNav={() => setIsMobileNavOpen(!isMobileNavOpen)}
           isLoading={isLoadingSummary}
         />
 

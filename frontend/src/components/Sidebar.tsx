@@ -9,7 +9,8 @@ import {
   Target,
   Database,
   BarChart3,
-  BookOpen
+  BookOpen,
+  X
 } from 'lucide-react';
 
 export type PageId =
@@ -29,6 +30,8 @@ interface SidebarProps {
   onSelectPage: (page: PageId) => void;
   datasetVersion: string;
   totalRecords: number;
+  onCloseMobile?: () => void;
+  isMobile?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -36,6 +39,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectPage,
   datasetVersion,
   totalRecords,
+  onCloseMobile,
+  isMobile = false,
 }) => {
   const navItems = [
     { id: 'dashboard' as PageId, label: 'Dashboard Overview', icon: LayoutDashboard },
@@ -50,10 +55,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'about' as PageId, label: 'Research & Methodology', icon: BookOpen },
   ];
 
+  const handleItemClick = (id: PageId) => {
+    onSelectPage(id);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen select-none shrink-0">
+    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-full select-none shrink-0 shadow-lg md:shadow-none">
       {/* Brand & Author */}
-      <div className="h-16 px-5 flex items-center border-b border-slate-200 bg-white">
+      <div className="h-16 px-5 flex items-center justify-between border-b border-slate-200 bg-white">
         <div className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-md bg-rose-900 flex items-center justify-center text-white font-bold text-xs shadow-xs tracking-wider">
             AM
@@ -67,6 +79,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </p>
           </div>
         </div>
+
+        {/* Close Button on Mobile Drawer */}
+        {isMobile && onCloseMobile && (
+          <button
+            onClick={onCloseMobile}
+            className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition md:hidden"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Navigation Links */}
@@ -80,8 +103,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <button
               key={item.id}
-              onClick={() => onSelectPage(item.id)}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-md text-xs font-medium transition text-left ${
+              onClick={() => handleItemClick(item.id)}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-md text-xs font-medium transition text-left ${
                 isActive
                   ? 'bg-rose-50/80 text-rose-900 border border-rose-200/90 font-semibold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -102,8 +125,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <button
               key={item.id}
-              onClick={() => onSelectPage(item.id)}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-md text-xs font-medium transition text-left ${
+              onClick={() => handleItemClick(item.id)}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-md text-xs font-medium transition text-left ${
                 isActive
                   ? 'bg-rose-50/80 text-rose-900 border border-rose-200/90 font-semibold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -120,17 +143,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-3 border-t border-slate-200 bg-slate-50/60">
         <div className="p-2.5 rounded-md border border-slate-200 bg-white shadow-2xs">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[11px] font-medium text-slate-500">Verified Cohort</span>
+            <span className="text-[11px] font-medium text-slate-500">Kaggle Cohort</span>
             <span className="inline-flex items-center text-[10px] text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1" />
-              Active
+              Live
             </span>
           </div>
           <div className="mt-1 text-xs font-semibold text-slate-900 truncate font-tabular">
             {totalRecords} Monitored Reels
           </div>
           <div className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
-            Aysha Malik Study • {datasetVersion}
+            harishyadav0506 • {datasetVersion}
           </div>
         </div>
       </div>
